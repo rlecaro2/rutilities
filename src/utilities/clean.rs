@@ -1,16 +1,22 @@
 use regex::Regex;
 
-pub fn clean_rut(doc: &str) -> String {
-  let mut rut = String::from(doc);
-  rut = rut.replace("k", "K");
+pub fn clean_rut(rut: &str) -> String {
+  let mut clean_document_number = String::from(rut);
+  clean_document_number = clean_document_number.replace("k", "K");
 
   let leading_zeroes = Regex::new(r"^0+").expect("invalid leading_zeroes regex");
-  rut = leading_zeroes.replace(&rut, "").to_owned().to_string();
+  clean_document_number = leading_zeroes
+    .replace(&clean_document_number, "")
+    .to_owned()
+    .to_string();
 
   let non_k_letters = Regex::new(r"[^\dK]").expect("invalid non_k_letters regex");
-  rut = non_k_letters.replace_all(&rut, "").to_owned().to_string();
+  clean_document_number = non_k_letters
+    .replace_all(&clean_document_number, "")
+    .to_owned()
+    .to_string();
 
-  return rut;
+  return clean_document_number;
 }
 
 #[cfg(test)]
