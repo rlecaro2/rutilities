@@ -1,5 +1,15 @@
 use regex::Regex;
 
+/// Clean a formatted rut (or with anything, really) to keep only the significant characters.
+/// Useful for internal representations and validating.
+/// ```rust
+/// use rutilities::clean_rut;
+///
+/// fn main() {
+///   let rut = "12.345.678-9";
+///   let clean = clean_rut(&rut);
+///   assert_eq!(clean, "123456789");
+/// }
 pub fn clean_rut(rut: &str) -> String {
   let mut clean_document_number = String::from(rut);
   clean_document_number = clean_document_number.replace("k", "K");

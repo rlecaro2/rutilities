@@ -1,6 +1,17 @@
 use super::get_verification_digit;
 use rand::Rng;
 
+/// Generate a valid, clean rut.
+/// Useful for tests.
+/// ```rust
+/// use rutilities::{generate_valid_rut, is_rut_valid, clean_rut};
+///
+/// fn main() {
+///   let generated = generate_valid_rut();
+///
+///   assert_eq!(is_rut_valid(&generated), true);
+///   assert_eq!(clean_rut(&generated), generated);
+/// }
 pub fn generate_valid_rut() -> String {
   let mut rng = rand::thread_rng();
   let body: u32 = rng.gen_range(1_000_000..100_000_000);
