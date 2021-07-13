@@ -17,7 +17,7 @@ jobs:
         id: check
         uses: thebongy/version-check@v1
         with:
-          file: cargo.toml
+          file: Cargo.toml
 
       - name: Log when unchanged
         if: steps.check.outputs.versionChanged != 'true'
