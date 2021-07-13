@@ -11,6 +11,7 @@
  */
 
 /// Returns the verification (or check) digit for the given rut.
+/// Useful for verification or generating a random rut.
 /// @see https://es.wikipedia.org/wiki/Anexo:Implementaciones_para_algoritmo_de_rut#Javascript
 /// # Arguments
 ///

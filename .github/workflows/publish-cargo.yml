@@ -1,0 +1,39 @@
+name: Publish to Crates.io
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish-cargo:
+    name: "Publish to Crates.io"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: git fetch --all --tags
+
+      - name: Check if version has been updated
+        id: check
+        uses: thebongy/version-check@v1
+        with:
+          file: cargo.toml
+
+      - name: Log when unchanged
+        if: steps.check.outputs.versionChanged != 'true'
+        run: 'echo "No version change :/"'
+
+      - name: Log when changed
+        if: steps.check.outputs.versionChanged == 'true'
+        run: 'echo "Version change! -> ${{ steps.check.outputs.releaseVersion }}"'
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: "Publish with cargo"
+        if: steps.check.outputs.versionChanged == 'true'
+        uses: katyo/publish-crates@v1
+        with:
+          registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}

@@ -1,5 +1,16 @@
 use super::clean_rut;
 
+/// Format a rut with dots every 3 characters and a dash before the last one.
+/// Useful to show an internal value.
+/// This function cleans the rut, no need to have it clean.
+/// ```rust
+/// use rutilities::format_rut;
+///
+/// fn main() {
+///   let rut = "123456789";
+///   let formatted = format_rut(&rut);
+///   assert_eq!(formatted, "12.345.678-9");
+/// }
 pub fn format_rut(rut: &str) -> String {
   let clean_rut = clean_rut(rut);
   let verification_digit = match clean_rut.chars().last().clone() {
