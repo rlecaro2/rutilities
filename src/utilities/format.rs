@@ -1,4 +1,5 @@
 use super::clean_rut;
+use wasm_bindgen::prelude::wasm_bindgen;
 
 /// Format a rut with dots every 3 characters and a dash before the last one.
 /// Useful to show an internal value.
@@ -11,6 +12,7 @@ use super::clean_rut;
 ///   let formatted = format_rut(&rut);
 ///   assert_eq!(formatted, "12.345.678-9");
 /// }
+#[wasm_bindgen(js_name = formatRut)]
 pub fn format_rut(rut: &str) -> String {
   let clean_rut = clean_rut(rut);
   let verification_digit = match clean_rut.chars().last().clone() {

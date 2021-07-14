@@ -1,4 +1,5 @@
 use super::get_verification_digit;
+use wasm_bindgen::prelude::wasm_bindgen;
 
 /// Check if a given rut is valid
 /// ```rust
@@ -11,6 +12,7 @@ use super::get_verification_digit;
 ///   let invalid_rut = "12.345.678-9";
 ///   assert_eq!(is_rut_valid(&invalid_rut), false);
 /// }
+#[wasm_bindgen(js_name = isRutValid)]
 pub fn is_rut_valid(rut: &str) -> bool {
   let mut unformatted_document_number = rut.replace(".", "").replace("-", "");
   let given_verification_digit = match unformatted_document_number.pop() {

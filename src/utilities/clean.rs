@@ -1,4 +1,5 @@
 use regex::Regex;
+use wasm_bindgen::prelude::wasm_bindgen;
 
 /// Clean a formatted rut (or with anything, really) to keep only the significant characters.
 /// Useful for internal representations and validating.
@@ -10,6 +11,7 @@ use regex::Regex;
 ///   let clean = clean_rut(&rut);
 ///   assert_eq!(clean, "123456789");
 /// }
+#[wasm_bindgen(js_name = cleanRut)]
 pub fn clean_rut(rut: &str) -> String {
   let mut clean_document_number = String::from(rut);
   clean_document_number = clean_document_number.replace("k", "K");
