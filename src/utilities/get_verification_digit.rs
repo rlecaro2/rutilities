@@ -16,35 +16,40 @@
 /// # Arguments
 ///
 /// * `rut` - A string slice that holds the document nubmer withour verification digit
-pub fn get_verification_digit(rut: &str) -> char {
-  let rut_numbers_reversed: Vec<u32> = String::from(rut)
+pub fn get_verification_digit(rut: &str) -> Result<char, &'static str> {
+  let rut_numbers_reversed: Vec<Option<u32>> = String::from(rut)
     .chars()
-    .map(|character| {
-      character
-        .to_digit(10)
-        .unwrap_or_else(|| panic!("'{}' cant be coerced to a number", character))
-    })
+    .map(|character| character.to_digit(10))
     .rev()
     .collect();
 
-  let mut summed = 0;
+  if rut_numbers_reversed
+    .iter()
+    .any(|maybe_num| maybe_num.is_none())
+  {
+    return Err("Rut is not a number");
+  }
+
+  let rut_numbers_reversed: Vec<u32> = rut_numbers_reversed.iter().map(|d| d.unwrap()).collect();
+
+  let mut sum = 0;
   let mut multiplier = 2;
   for digit in rut_numbers_reversed.iter() {
-    summed += digit * multiplier;
+    sum += digit * multiplier;
     multiplier = match multiplier {
       7 => 2,
       m => m + 1,
     };
   }
 
-  let raw_verification_digit = 11 - summed.rem_euclid(11);
+  let raw_verification_digit = 11 - sum.rem_euclid(11);
   return match raw_verification_digit {
-    10 => 'K',
-    11 => '0',
-    r => r
-      .to_string()
-      .pop()
-      .expect("There is something really wrong."),
+    10 => Ok('K'),
+    11 => Ok('0'),
+    r => match r.to_string().pop() {
+      Some(vd) => Ok(vd),
+      None => Err("Something is really wrong."),
+    },
   };
 }
 
@@ -54,22 +59,24 @@ mod tests {
 
   #[test]
   fn it_gets_a_real_verification_number() {
-    assert_eq!(get_verification_digit("10956996"), '8');
+    assert_eq!(get_verification_digit("10956996"), Ok('8'));
   }
 
   #[test]
   fn it_gets_a_real_verification_number_2() {
-    assert_eq!(get_verification_digit("17697567"), '9');
+    assert_eq!(get_verification_digit("17697567"), Ok('9'));
   }
 
   #[test]
   fn it_returns_k_when_rest_is_greater_than_0() {
-    assert_eq!(get_verification_digit("13754444"), 'K');
+    assert_eq!(get_verification_digit("13754444"), Ok('K'));
   }
 
   #[test]
-  #[should_panic(expected = "'r' cant be coerced to a number")]
-  fn it_panics_when_rut_has_letters() {
-    get_verification_digit("not_a_number");
+  fn it_errs_when_rut_has_letters() {
+    assert_eq!(
+      get_verification_digit("not_a_number"),
+      Err("Rut is not a number")
+    );
   }
 }

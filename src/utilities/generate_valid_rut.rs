@@ -1,5 +1,6 @@
 use super::get_verification_digit;
 use rand::Rng;
+use wasm_bindgen::prelude::wasm_bindgen;
 
 /// Generate a valid, clean rut.
 /// Useful for tests.
@@ -12,11 +13,12 @@ use rand::Rng;
 ///   assert_eq!(is_rut_valid(&generated), true);
 ///   assert_eq!(clean_rut(&generated), generated);
 /// }
+#[wasm_bindgen(js_name = generateValidRut)]
 pub fn generate_valid_rut() -> String {
   let mut rng = rand::thread_rng();
   let body: u32 = rng.gen_range(1_000_000..100_000_000);
   let mut body = body.to_string();
-  let verification_digit = get_verification_digit(&body);
+  let verification_digit = get_verification_digit(&body).expect("Generated invalid rut body");
 
   body.push(verification_digit);
   return body;
