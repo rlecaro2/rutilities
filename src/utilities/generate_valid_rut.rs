@@ -16,7 +16,7 @@ pub fn generate_valid_rut() -> String {
   let mut rng = rand::thread_rng();
   let body: u32 = rng.gen_range(1_000_000..100_000_000);
   let mut body = body.to_string();
-  let verification_digit = get_verification_digit(&body);
+  let verification_digit = get_verification_digit(&body).expect("Generated invalid rut body");
 
   body.push(verification_digit);
   return body;

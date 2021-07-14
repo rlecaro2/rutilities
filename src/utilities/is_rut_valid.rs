@@ -1,4 +1,4 @@
-use super::{clean_rut, get_verification_digit};
+use super::get_verification_digit;
 
 /// Check if a given rut is valid
 /// ```rust
@@ -12,13 +12,16 @@ use super::{clean_rut, get_verification_digit};
 ///   assert_eq!(is_rut_valid(&invalid_rut), false);
 /// }
 pub fn is_rut_valid(rut: &str) -> bool {
-  let mut clean_document_number = clean_rut(rut);
-  let given_verification_digit = match clean_document_number.pop() {
+  let mut unformatted_document_number = rut.replace(".", "").replace("-", "");
+  let given_verification_digit = match unformatted_document_number.pop() {
     Some(vd) => vd,
     None => return false,
   };
 
-  let expected_verification_digit = get_verification_digit(&clean_document_number);
+  let expected_verification_digit = match get_verification_digit(&unformatted_document_number) {
+    Ok(vd) => vd,
+    Err(_) => return false,
+  };
 
   return given_verification_digit == expected_verification_digit;
 }
@@ -35,6 +38,11 @@ mod tests {
   #[test]
   fn it_returns_false_for_empty_rut() {
     assert_eq!(is_rut_valid(""), false);
+  }
+
+  #[test]
+  fn it_returns_false_for_dirty_rut() {
+    assert_eq!(is_rut_valid("muddy87566129"), false);
   }
 
   #[test]
