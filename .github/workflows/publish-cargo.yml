@@ -28,7 +28,7 @@ jobs:
         run: 'echo "Version change! -> ${{ steps.check.outputs.releaseVersion }}"'
 
       - name: Create Release
-        if: ${{ steps.check.outputs.versionChanged != 'true' }}
+        if: ${{ steps.check.outputs.versionChanged == 'true' }}
         id: create_release
         uses: actions/create-release@v1
         env:
