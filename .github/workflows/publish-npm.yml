@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  test:
+  npm-publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,6 +27,8 @@ jobs:
 
       - name: publish
         if: steps.check.outputs.versionChanged == 'true'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
           wasm-pack build
