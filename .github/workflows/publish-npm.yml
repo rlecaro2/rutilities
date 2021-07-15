@@ -1,0 +1,33 @@
+name: Publish to NPM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Check if version has been updated
+        id: check
+        uses: thebongy/version-check@v1
+        with:
+          file: Cargo.toml
+
+      - name: Log when unchanged
+        if: steps.check.outputs.versionChanged != 'true'
+        run: 'echo "No version change :/"'
+
+      - name: Log when changed
+        if: steps.check.outputs.versionChanged == 'true'
+        run: 'echo "Version change! -> ${{ steps.check.outputs.releaseVersion }}"'
+
+      - name: publish
+        if: steps.check.outputs.versionChanged == 'true'
+        run: |
+          curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          wasm-pack build
+          wasm-pack publish
