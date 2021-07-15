@@ -18,15 +18,15 @@ jobs:
           file: Cargo.toml
 
       - name: Log when unchanged
-        if: steps.check.outputs.versionChanged != 'true'
+        if: steps.check.outputs.versionChanged != true
         run: 'echo "No version change :/"'
 
       - name: Log when changed
-        if: steps.check.outputs.versionChanged == 'true'
+        if: steps.check.outputs.versionChanged == true
         run: 'echo "Version change! -> ${{ steps.check.outputs.releaseVersion }}"'
 
       - name: publish
-        if: steps.check.outputs.versionChanged == 'true'
+        if: steps.check.outputs.versionChanged == true
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
