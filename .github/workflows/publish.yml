@@ -1,4 +1,4 @@
-name: Publish to Crates.io
+name: Publish
 
 on:
   push:
@@ -6,29 +6,20 @@ on:
       - main
 
 jobs:
-  publish-cargo:
-    name: "Publish to Crates.io"
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: git fetch --all --tags
 
+      # This fails if the tag or file already exists
       - name: Check if version has been updated
         id: check
         uses: thebongy/version-check@v1
         with:
           file: "Cargo.toml"
 
-      - name: Log when unchanged
-        if: ${{ steps.check.outputs.versionChanged != 'true' }}
-        run: 'echo "No version change :/"'
-
-      - name: Log when changed
-        if: ${{ steps.check.outputs.versionChanged == 'true' }}
-        run: 'echo "Version change! -> ${{ steps.check.outputs.releaseVersion }}"'
-
       - name: Create Release
-        if: ${{ steps.check.outputs.versionChanged == 'true' }}
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -40,13 +31,27 @@ jobs:
           draft: false
           prerelease: false
 
+      # Publish to cargo start
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
 
       - name: "Publish with cargo"
-        if: ${{ steps.check.outputs.versionChanged == 'true' }}
         uses: katyo/publish-crates@v1
         with:
           registry-token: ${{ secrets.CARGO_TOKEN }}
+
+      # Publish to NPM start
+      - name: setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: "Publish with NPM"
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          wasm-pack build
+          npm publish ./pkg
