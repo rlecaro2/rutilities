@@ -27,9 +27,12 @@ jobs:
 
       - name: publish
         if: steps.check.outputs.versionChanged == 'true'
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
           wasm-pack build
-          wasm-pack publish
+          npm publish ./pkg
