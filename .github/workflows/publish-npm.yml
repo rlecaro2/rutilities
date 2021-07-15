@@ -31,19 +31,6 @@ jobs:
         with:
           node-version: "14"
 
-      - name: Create Release
-        if: ${{ steps.check.outputs.versionChanged == 'true' }}
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.check.outputs.versionChanged }}
-          release_name: Release ${{ steps.check.outputs.versionChanged }}
-          body: ${{ github.ref }}
-          draft: false
-          prerelease: false
-
       - name: publish
         if: ${{ steps.check.outputs.versionChanged == 'true' }}
         env:

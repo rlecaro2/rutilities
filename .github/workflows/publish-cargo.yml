@@ -34,8 +34,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.check.outputs.versionChanged }}
-          release_name: Release ${{ steps.check.outputs.versionChanged }}
+          tag_name: ${{ steps.check.outputs.releaseVersion }}
+          release_name: Release ${{ steps.check.outputs.releaseVersion }}
           body: ${{ github.ref }}
           draft: false
           prerelease: false
