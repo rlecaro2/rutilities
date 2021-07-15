@@ -27,6 +27,19 @@ jobs:
         if: ${{ steps.check.outputs.versionChanged == 'true' }}
         run: 'echo "Version change! -> ${{ steps.check.outputs.releaseVersion }}"'
 
+      - name: Create Release
+        if: ${{ steps.check.outputs.versionChanged != 'true' }}
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.check.outputs.versionChanged }}
+          release_name: Release ${{ steps.check.outputs.versionChanged }}
+          body: ${{ github.ref }}
+          draft: false
+          prerelease: false
+
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
